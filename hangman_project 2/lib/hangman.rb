@@ -35,16 +35,17 @@ class Hangman
   
   
   def try_guess(char)
-
-    self.get_matching_indices(char)
-
     if self.already_attempted?(char)
       print "that has already been attempted"
       return false
     end
+
+    idxs = self.get_matching_indices(char)
+    self.fill_indices(char,idxs)
     
-   
-      char << @attempted_chars
+    @remaining_incorrect_guesses -= 1 if idxs.length == 0
+
+      @attempted_chars << char
       true
     
   end
@@ -56,12 +57,12 @@ class Hangman
   end
 
   def win?
-    if guess_word == @secret_word
+    if guess_word.join("") == @secret_word
       p "WIN"
       return true
     end
-
-    return false if guess_word != @secret_word
+    
+    false
   end
 
   def lose?
@@ -69,6 +70,17 @@ class Hangman
       print "LOSE"
       return true
     end
+
+    false
+  end
+
+  def game_over?
+    if self.win? || self.lose?
+      print @secret_word 
+      return true
+    end
+
+    false
   end
 
 
